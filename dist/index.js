@@ -1,15 +1,30 @@
 "use strict";
 var __extends = (this && this.__extends) || (function () {
-    var extendStatics = Object.setPrototypeOf ||
-        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
+var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
+    if (pack || arguments.length === 2) for (var i = 0, l = from.length, ar; i < l; i++) {
+        if (ar || !(i in from)) {
+            if (!ar) ar = Array.prototype.slice.call(from, 0, i);
+            ar[i] = from[i];
+        }
+    }
+    return to.concat(ar || Array.prototype.slice.call(from));
+};
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.PrefixedLogger = exports.NullLogger = exports.ConsoleLogger = exports.LoggerBase = void 0;
 var sprintf_js_1 = require("sprintf-js");
 var style = require('ansi-styles');
 var LoggerBase = (function () {
@@ -27,35 +42,35 @@ var LoggerBase = (function () {
             meta = message;
             msg = args.shift();
         }
-        this._log.apply(this, [level, meta, msg].concat(args));
+        this._log.apply(this, __spreadArray([level, meta, msg], args, false));
     };
     LoggerBase.prototype.debug = function (message) {
         var args = [];
         for (var _i = 1; _i < arguments.length; _i++) {
             args[_i - 1] = arguments[_i];
         }
-        this.log.apply(this, ['debug', message].concat(args));
+        this.log.apply(this, __spreadArray(['debug', message], args, false));
     };
     LoggerBase.prototype.info = function (message) {
         var args = [];
         for (var _i = 1; _i < arguments.length; _i++) {
             args[_i - 1] = arguments[_i];
         }
-        this.log.apply(this, ['info', message].concat(args));
+        this.log.apply(this, __spreadArray(['info', message], args, false));
     };
     LoggerBase.prototype.warn = function (message) {
         var args = [];
         for (var _i = 1; _i < arguments.length; _i++) {
             args[_i - 1] = arguments[_i];
         }
-        this.log.apply(this, ['warn', message].concat(args));
+        this.log.apply(this, __spreadArray(['warn', message], args, false));
     };
     LoggerBase.prototype.error = function (message) {
         var args = [];
         for (var _i = 1; _i < arguments.length; _i++) {
             args[_i - 1] = arguments[_i];
         }
-        this.log.apply(this, ['error', message].concat(args));
+        this.log.apply(this, __spreadArray(['error', message], args, false));
     };
     return LoggerBase;
 }());
@@ -85,19 +100,19 @@ var ConsoleLogger = (function (_super) {
             var messageColor = this.colors[level].message || this.colors['*'].message || { open: "", close: "" };
             var metaColor = this.colors[level].meta || this.colors['*'].meta || { open: "", close: "" };
             if (args.length == 0)
-                console.log(sprintf_js_1.sprintf("[%s%-5s%s] %s%s%s", levelColor.open, level, levelColor.close, messageColor.open, message, messageColor.close));
+                console.log((0, sprintf_js_1.sprintf)("[%s%-5s%s] %s%s%s", levelColor.open, level, levelColor.close, messageColor.open, message, messageColor.close));
             else
-                console.log(sprintf_js_1.sprintf.apply(void 0, ["[%s%-5s%s] %s" + message, levelColor.open, level, levelColor.close, messageColor.open].concat(args)) + messageColor.close);
+                console.log(sprintf_js_1.sprintf.apply(void 0, __spreadArray(["[%s%-5s%s] %s" + message, levelColor.open, level, levelColor.close, messageColor.open], args, false)) + messageColor.close);
             if (meta != null)
-                console.log(sprintf_js_1.sprintf("  %s%j%s", metaColor.open, meta, metaColor.close));
+                console.log((0, sprintf_js_1.sprintf)("  %s%j%s", metaColor.open, meta, metaColor.close));
         }
         else {
             if (args.length == 0)
-                console.log(sprintf_js_1.sprintf("[%-5s] %s", level, message));
+                console.log((0, sprintf_js_1.sprintf)("[%-5s] %s", level, message));
             else
-                console.log(sprintf_js_1.sprintf.apply(void 0, ["[%-5s] " + message, level].concat(args)));
+                console.log(sprintf_js_1.sprintf.apply(void 0, __spreadArray(["[%-5s] " + message, level], args, false)));
             if (meta != null)
-                console.log(sprintf_js_1.sprintf("  %j", meta));
+                console.log((0, sprintf_js_1.sprintf)("  %j", meta));
         }
     };
     return ConsoleLogger;
@@ -126,12 +141,12 @@ var PrefixedLogger = (function (_super) {
         return _this;
     }
     PrefixedLogger.prototype._log = function (level, meta, message) {
+        var _a;
         var args = [];
         for (var _i = 3; _i < arguments.length; _i++) {
             args[_i - 3] = arguments[_i];
         }
-        (_a = this.output).log.apply(_a, [level, meta, (message == null) ? this.prefix : this.prefix + message].concat(args));
-        var _a;
+        (_a = this.output).log.apply(_a, __spreadArray([level, meta, (message == null) ? this.prefix : this.prefix + message], args, false));
     };
     return PrefixedLogger;
 }(LoggerBase));
